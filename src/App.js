@@ -25,7 +25,7 @@ function App() {
 
       setScrabbleDict(dict);
     })
-  });
+  }, []);
 
   if (scrabbleDict.size === 0) {
     return <p>Loading...</p>

@@ -1,11 +1,41 @@
 .tile {
-    background-color: black;
+    background-color: rgb(210,180,140);
+    font-family: 'Oswald';
+    font-weight: bold;
+    border-radius: 10%;
 }
 
-.tile.selected {
-    background-color: red; 
+.tile div {
+    background-color: rgb(255,229,180);
+    border-radius: 10%;
 }
+
+
+.tile.selected div {
+    background-color: lightblue; 
+}
+
 
 .tile.dragged {
+    background-color: lightgray;
+}
+
+.tile.dragged.is-word {
     background-color: green;
+}
+
+.tile.dragged.is-found {
+    background-color: rgb(196, 145, 2);
+}
+
+.tile.dragged div {
+    background-color: white;
+}
+
+.tile.dragged.is-word div {
+    background-color: lightgreen;
+}
+
+.tile.dragged.is-found div {
+    background-color: rgb(255,244,155);
 }

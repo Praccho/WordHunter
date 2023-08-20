@@ -21,7 +21,6 @@ function Tile({ letter, length, className, onDragStart, onDragging, onDragEnd })
         width: outerLength,
         height: outerLength,
         padding: innerPadding,
-        backgroundColor: 'purple',
         boxSizing: "border-box"
     };
 
@@ -29,11 +28,10 @@ function Tile({ letter, length, className, onDragStart, onDragging, onDragEnd })
         display: "flex",
         width: innerLength,
         height: innerLength,
-        backgroundColor: 'lightgray',
         boxSizing: "border-box",
         justifyContent: "center",
         alignItems: "center",
-        fontSize: `${Math.floor(0.8*innerLength)}px`
+        fontSize: `${Math.floor(0.75*innerLength)}px`
     };
 
     return (

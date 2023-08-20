@@ -3,23 +3,26 @@ import { ReactDOM } from "react";
 import { useState, useEffect } from "react";
 import Tile from "./Tile";
 import { Repeat, update } from "immutable";
-import './GameBoard.css'
+import './GameBoard.css';
 
 function GameBoard({ dict }) {
 
     const windowW = window.innerWidth;
     const windowH = window.innerHeight;
 
-    const numTiles = 8;
-    const minLen = Math.min(windowH, windowW);
-    const tileW = Math.floor(minLen / numTiles);
+    const numRows = 8;
+    const tileW = windowH / numRows;
+    const numCols = Math.floor((windowW * 0.8) / tileW);
+    const boardLen = tileW * numCols;
+    const sideBarLen = windowW - boardLen;
     
-    const [tileLetters, setTileLetters] = useState(Array(8).fill(null).map(() => Array(8).fill('')));
+    const [tileLetters, setTileLetters] = useState(Array(numRows).fill(null).map(() => Array(numCols).fill('')));
     const [selectedTile, setSelectedTile] = useState(null);
     const [inputValue, setInputValue] = useState('');
     const [dragTiles, setDragTiles] = useState([]);
-    const [seenTiles, setSeenTiles] = useState(Array(8).fill(null).map(() => Array(8).fill(0)));
+    const [seenTiles, setSeenTiles] = useState(Array(numRows).fill(null).map(() => Array(numCols).fill(0)));
     const [dragging, setDragging] = useState(false);
+    const [foundWords, setFoundWords] = useState([]);
 
     const handleMouseDown = (rowIndex, colIndex, event) => {
         event.preventDefault();
@@ -30,8 +33,10 @@ function GameBoard({ dict }) {
             const dragTilesCopy = [...dragTiles];
             const appTile = {letter: tileLetters[rowIndex][colIndex], row: rowIndex, col: colIndex};
             dragTilesCopy.push(appTile)
-
-            setSelectedTile(false);            
+            
+            if (selectedTile && (selectedTile.rowIndex != rowIndex || selectedTile.colIndex != colIndex)) {
+                setSelectedTile(false);             
+            }
             setDragging(true);
             setSeenTiles(seenTilesCopy);
             setDragTiles(dragTilesCopy);
@@ -75,15 +80,18 @@ function GameBoard({ dict }) {
                 const userStr = toStr();
                 if (dict.has(userStr)) {
                     // log scores
-                    console.log(userStr + " is a word!")
+                    const foundWordsCopy = [...foundWords];
+                    foundWordsCopy.push(userStr);
+                    setFoundWords(foundWordsCopy);
+                    console.log(userStr + " is a word!");
                 }
             }
 
-            setSeenTiles(Array(8).fill(null).map(() => Array(8).fill(0)));
+            setSeenTiles(Array(numRows).fill(null).map(() => Array(numCols).fill(0)));
             setDragging(false);
             setDragTiles([]);
         }
-        if (dragTiles.length <= 1 && (!selectedTile || !(selectedTile && selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex))) {
+        if (dragTiles.length <= 1 && !selectedTile && (!selectedTile && !(selectedTile && selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex))) {
             setSelectedTile({rowIndex, colIndex});
             setInputValue(''); 
         } else {
@@ -116,7 +124,9 @@ function GameBoard({ dict }) {
     const handleDragEnter = (rowIndex, colIndex) => {
 
     }
-
+    const navBarContainerStyle = {
+        width: boardLen
+    }
     return (
         <div className="game-board">
             {tileLetters.map((row, rowIndex) => (
@@ -129,7 +139,9 @@ function GameBoard({ dict }) {
                         className={`tile 
                             ${selectedTile &&
                             selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex ? 'selected' : ''}
-                            ${dragging && seenTiles[rowIndex][colIndex] ? 'dragged' : ''}`}
+                            ${dragging && seenTiles[rowIndex][colIndex] ? 'dragged' : ''}
+                            ${dragging && dragTiles.length >= 3 && foundWords.includes(toStr()) ? 'is-found' : ''}
+                            ${dragging && dragTiles.length >= 3 && dict.has(toStr()) && !foundWords.includes(toStr()) ? 'is-word' : ''}`}                       
                         onDragStart={(e) => handleMouseDown(rowIndex, colIndex, e)}
                         onDragging={(e) => handleMouseDrag(rowIndex, colIndex, e)}
                         onDragEnd={(e) => handleMouseUp(rowIndex, colIndex, e)}
