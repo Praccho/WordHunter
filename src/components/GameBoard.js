@@ -5,7 +5,8 @@ import Tile from "./Tile";
 import { Repeat, update } from "immutable";
 import './GameBoard.css'
 
-function GameBoard() {
+function GameBoard({ dict }) {
+
     const windowW = window.innerWidth;
     const windowH = window.innerHeight;
 
@@ -20,9 +21,20 @@ function GameBoard() {
     const [seenTiles, setSeenTiles] = useState(Array(8).fill(null).map(() => Array(8).fill(0)));
     const [dragging, setDragging] = useState(false);
 
-    const handleMouseDown = (rowIndex, colIndex) => {
+    const handleMouseDown = (rowIndex, colIndex, event) => {
+        event.preventDefault();
         if (tileLetters[rowIndex][colIndex] != '') {
+            const seenTilesCopy = [...seenTiles];
+            seenTilesCopy[rowIndex][colIndex] = 1;
+
+            const dragTilesCopy = [...dragTiles];
+            const appTile = {letter: tileLetters[rowIndex][colIndex], row: rowIndex, col: colIndex};
+            dragTilesCopy.push(appTile)
+
+            setSelectedTile(false);            
             setDragging(true);
+            setSeenTiles(seenTilesCopy);
+            setDragTiles(dragTilesCopy);
         }
     }
 
@@ -30,10 +42,11 @@ function GameBoard() {
         return Math.abs(row - prevR) <= 1 && Math.abs(col - prevC) <= 1
     }
 
-    const handleMouseDrag = (rowIndex, colIndex) => {
+    const handleMouseDrag = (rowIndex, colIndex, event) => {
+        event.preventDefault();
         if (dragging && !seenTiles[rowIndex][colIndex] && tileLetters[rowIndex][colIndex] != '' &&
-            (seenTiles.length == 0 || validNext(rowIndex, colIndex, seenTiles[seenTiles.length-1].row, seenTiles[seenTiles.length-1].col))) {
-            
+            validNext(rowIndex, colIndex, (dragTiles[dragTiles.length-1]).row, (dragTiles[dragTiles.length-1]).col)) {
+
             const seenTilesCopy = [...seenTiles];
             seenTilesCopy[rowIndex][colIndex] = 1;
 
@@ -46,10 +59,26 @@ function GameBoard() {
         }
     }
 
-    const handleMouseUp = (rowIndex, colIndex) => {
+    function toStr() {
+        let ret = ""
+        for (let i = 0; i < dragTiles.length; i++) {
+            ret += dragTiles[i].letter;
+        }
+        return ret;
+    }
+
+    const handleMouseUp = (rowIndex, colIndex, event) => {
+        event.preventDefault();
         // drag ends on same key (aka select)
         if (dragging) {
-            //validate word
+            if (dragTiles.length >= 3) {
+                const userStr = toStr();
+                if (dict.has(userStr)) {
+                    // log scores
+                    console.log(userStr + " is a word!")
+                }
+            }
+
             setSeenTiles(Array(8).fill(null).map(() => Array(8).fill(0)));
             setDragging(false);
             setDragTiles([]);
@@ -101,9 +130,9 @@ function GameBoard() {
                             ${selectedTile &&
                             selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex ? 'selected' : ''}
                             ${dragging && seenTiles[rowIndex][colIndex] ? 'dragged' : ''}`}
-                        onDragStart={() => handleMouseDown(rowIndex, colIndex)}
-                        onDragging={() => handleMouseDrag(rowIndex, colIndex)}
-                        onDragEnd={() => handleMouseUp(rowIndex, colIndex)}
+                        onDragStart={(e) => handleMouseDown(rowIndex, colIndex, e)}
+                        onDragging={(e) => handleMouseDrag(rowIndex, colIndex, e)}
+                        onDragEnd={(e) => handleMouseUp(rowIndex, colIndex, e)}
                         />
                     ))}
                 </div>
