@@ -1,0 +1,11 @@
+.tile {
+    background-color: black;
+}
+
+.tile.selected {
+    background-color: red; 
+}
+
+.tile.dragged {
+    background-color: green;
+}
