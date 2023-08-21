@@ -2,9 +2,10 @@ const path = require('path');
 
 module.exports = {
     output: {
-        path: path.join(__dirname, '/dist'),
+        path: path.resolve(__dirname, 'dist'),
         filename: 'index.bundle.js'
     },
+    mode: 'development',
     devServer: {
         port: 3010,
         liveReload: true

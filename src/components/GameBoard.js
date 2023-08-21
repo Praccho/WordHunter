@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Tile from "./Tile";
 import { Repeat, update } from "immutable";
 import './GameBoard.css';
+import SideBar from "./SideBar";
 
 function GameBoard({ dict }) {
 
@@ -91,7 +92,7 @@ function GameBoard({ dict }) {
             setDragging(false);
             setDragTiles([]);
         }
-        if (dragTiles.length <= 1 && !selectedTile && (!selectedTile && !(selectedTile && selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex))) {
+        if (dragTiles.length <= 1 && (!selectedTile || !(selectedTile && selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex))) {
             setSelectedTile({rowIndex, colIndex});
             setInputValue(''); 
         } else {
@@ -106,9 +107,40 @@ function GameBoard({ dict }) {
                 updatedTileLetters[selectedTile.rowIndex][selectedTile.colIndex] = e.key.toUpperCase();
             } else if (e.key === "Backspace") {
                 updatedTileLetters[selectedTile.rowIndex][selectedTile.colIndex] = '';
+            } else if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                switch (e.key) {
+                    case "ArrowDown":
+                        if (selectedTile.rowIndex < numRows-1) {
+                            setSelectedTile({rowIndex: selectedTile.rowIndex+1, colIndex: selectedTile.colIndex});
+                        } else {
+                            setSelectedTile({rowIndex: 0, colIndex: selectedTile.colIndex});
+                        }
+                        break;
+                    case "ArrowUp":
+                        if (selectedTile.rowIndex > 0) {
+                            setSelectedTile({rowIndex: selectedTile.rowIndex-1, colIndex: selectedTile.colIndex});
+                        } else {
+                            setSelectedTile({rowIndex: numRows-1, colIndex: selectedTile.colIndex});
+                        }
+                        break;
+                    case "ArrowRight":
+                        if (selectedTile.colIndex < numCols-1) {
+                            setSelectedTile({rowIndex: selectedTile.rowIndex, colIndex: selectedTile.colIndex+1})
+                        } else {
+                            setSelectedTile({rowIndex: selectedTile.rowIndex, colIndex: 0})
+                        }
+                        break;
+                    case "ArrowLeft":
+                        if (selectedTile.colIndex > 0) {
+                            setSelectedTile({rowIndex: selectedTile.rowIndex, colIndex: selectedTile.colIndex-1})
+                        } else {
+                            setSelectedTile({rowIndex: selectedTile.rowIndex, colIndex: numCols-1})
+                        }
+                        break;
+                }
             }
+            
             setTileLetters(updatedTileLetters);
-            setSelectedTile(null);
             setInputValue('');
         }
     }
@@ -121,34 +153,61 @@ function GameBoard({ dict }) {
         };
     });
 
-    const handleDragEnter = (rowIndex, colIndex) => {
-
+    function chooseLetter() {
+        const choice = Math.random()
+        if (choice < 0.4) {
+            let i = Math.floor(Math.random() * 8);
+            return ["A", "E", "I", "O", "U", "Y", "R", "S"][i];
+        } else {
+            let i = Math.floor(Math.random() * 18);
+            return ["B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "T", "V", "W", "X", "Z"][i];
+        }
     }
+    
+    const handleRandomize = () => {
+        let copyTileLetters = [...tileLetters];
+        for (let i = 0; i < numRows; i++) {
+            for (let j = 0; j < numCols; j++) {
+                if (copyTileLetters[i][j] != "") {
+                    copyTileLetters[i][j] = chooseLetter();
+                }
+            }
+        }
+        setTileLetters(copyTileLetters);
+        setDragging(false);
+        setDragTiles([]);
+        setSelectedTile(null);
+    }
+
+    
     const navBarContainerStyle = {
         width: boardLen
     }
     return (
-        <div className="game-board">
-            {tileLetters.map((row, rowIndex) => (
-                <div key={rowIndex} className="row">
-                    {row.map((content, colIndex) => (
-                        <Tile
-                        key={colIndex}
-                        letter={content}
-                        length={tileW}
-                        className={`tile 
-                            ${selectedTile &&
-                            selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex ? 'selected' : ''}
-                            ${dragging && seenTiles[rowIndex][colIndex] ? 'dragged' : ''}
-                            ${dragging && dragTiles.length >= 3 && foundWords.includes(toStr()) ? 'is-found' : ''}
-                            ${dragging && dragTiles.length >= 3 && dict.has(toStr()) && !foundWords.includes(toStr()) ? 'is-word' : ''}`}                       
-                        onDragStart={(e) => handleMouseDown(rowIndex, colIndex, e)}
-                        onDragging={(e) => handleMouseDrag(rowIndex, colIndex, e)}
-                        onDragEnd={(e) => handleMouseUp(rowIndex, colIndex, e)}
-                        />
-                    ))}
-                </div>
-            ))}
+        <div className="full-window">
+            <div className="game-board">
+                {tileLetters.map((row, rowIndex) => (
+                    <div key={rowIndex} className="row">
+                        {row.map((content, colIndex) => (
+                            <Tile
+                            key={colIndex}
+                            letter={content}
+                            length={tileW}
+                            className={`tile 
+                                ${selectedTile &&
+                                selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex ? 'selected' : ''}
+                                ${dragging && seenTiles[rowIndex][colIndex] ? 'dragged' : ''}
+                                ${dragging && dragTiles.length >= 3 && foundWords.includes(toStr()) ? 'is-found' : ''}
+                                ${dragging && dragTiles.length >= 3 && dict.has(toStr()) && !foundWords.includes(toStr()) ? 'is-word' : ''}`}                       
+                            onDragStart={(e) => handleMouseDown(rowIndex, colIndex, e)}
+                            onDragging={(e) => handleMouseDrag(rowIndex, colIndex, e)}
+                            onDragEnd={(e) => handleMouseUp(rowIndex, colIndex, e)}
+                            />
+                        ))}
+                    </div>
+                ))}
+            </div>
+            <SideBar wordList={foundWords} onRandomize={() => handleRandomize()}/>
         </div>);
 }
 

@@ -1,3 +1,14 @@
+.full-window {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+}
+
+.game_board {
+    flex-grow: 0;
+}
+
 .row {
     display: flex;
 }
