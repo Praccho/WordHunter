@@ -2,13 +2,13 @@
   "name": "wordhunter",
   "version": "1.0.0",
   "description": "",
-  "homepage": "https://praccho.github.io/wordhunter",
+  "homepage": "https://praccho.github.io/WordHunter/",
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "test": "webpack serve --mode development",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
