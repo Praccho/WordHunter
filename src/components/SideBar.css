@@ -69,6 +69,11 @@ h1 {
     background-color: white;
 }
 
+.timer.redflash {
+    background-color: rgb(245, 79, 79);
+    color: white;
+}
+
 .button {
     box-sizing: border-box;
     flex: 1 1 auto;
@@ -79,6 +84,29 @@ h1 {
     background-color: rgb(255,229,180);
     border: 3px solid rgb(210,180,140);
     cursor: pointer;
+}
+
+.button:hover {
+    border: 3px solid lightgrey;
+    background-color: white;
+    box-shadow: 4px 4px 1px 0px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    transition: border 0.25s, background-color 0.25s, box-shadow 0.25s;
+}
+
+.button.stop {
+    border: 3px solid rgb(227, 37, 37);
+    background-color: rgb(246, 80, 80);
+    color: rgb(128, 2, 2);
+}
+
+.button.stop:hover {
+    border: 3px solid rgb(233, 7, 7);
+    background-color: rgb(249, 43, 43);
+    color: rgb(128, 2, 2);
+    box-shadow: 4px 4px 1px 0px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    transition: border 0.25s, background-color 0.25s, box-shadow 0.25s;
 }
 
 .break {

@@ -14,7 +14,7 @@ function Tile({ letter, length, className, onDragStart, onDragging, onDragEnd, o
         width: length,
         height: length,
         padding: outerPadding,
-        boxSizing: "border-box"
+        boxSizing: "border-box",
     };
 
     const tileStyle = {
@@ -33,6 +33,7 @@ function Tile({ letter, length, className, onDragStart, onDragging, onDragEnd, o
         alignItems: "center",
         fontSize: `${Math.floor(0.75*innerLength)}px`
     };
+
 
     return (
     <div className={className} style={outerStyle} onMouseDown={onDragStart} onMouseUp={onDragEnd}>
