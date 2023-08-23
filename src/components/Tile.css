@@ -3,11 +3,13 @@
     font-family: 'Oswald';
     font-weight: bold;
     border-radius: 10%;
+    color: rgb(111, 83, 42);
 }
 
 .tile div {
     background-color: rgb(255,229,180);
     border-radius: 10%;
+    cursor: pointer;    
 }
 
 .tile.selected {
@@ -21,18 +23,28 @@
     background-color: lightblue; 
 }
 
+.tile.hovering {
+    background-color: lightgray;
+    box-shadow: 3px 3px 1px 1px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    transition: background-color 0.1s, box-shadow 0.25s;
+}
+
+.tile.hovering div {
+    background-color: white;
+    transition: background-color 0.1s;
+}
 
 .tile.dragged {
     background-color: lightgray;
     box-shadow: 6px 6px 3px 3px rgba(0, 0, 0, 0.2);
     z-index: 10000;
-    transition: background-color 0.2s, box-shadow 1s;
+    transition: background-color 0.2s, box-shadow 0.7s;
 }
-
 
 .tile.dragged div {
     background-color: white;
-    transition: background-color 1s;
+    transition: background-color 2s;
 }
 
 .tile.dragged.is-word {

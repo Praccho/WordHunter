@@ -4,7 +4,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import './Tile.css'
 
-function Tile({ letter, length, className, onDragStart, onDragging, onDragEnd }) {
+function Tile({ letter, length, className, onDragStart, onDragging, onDragEnd, onMouseIn, onMouseOut }) {
     const outerPadding = Math.floor(0.05*length)
     const innerPadding = Math.floor(0.1*length);
     const outerLength = length - outerPadding * 2;
@@ -36,7 +36,7 @@ function Tile({ letter, length, className, onDragStart, onDragging, onDragEnd })
 
     return (
     <div className={className} style={outerStyle} onMouseDown={onDragStart} onMouseUp={onDragEnd}>
-        <div style={tileStyle}> 
+        <div style={tileStyle} onMouseOver={onMouseIn} onMouseLeave={onMouseOut}> 
             <div style={innerStyle} onMouseEnter={onDragging}>
                 {letter}
             </div>
@@ -51,7 +51,9 @@ Tile.propTypes = {
     className: PropTypes.string.isRequired,
     onDragStart: PropTypes.func.isRequired,
     onDragging: PropTypes.func.isRequired,
-    onDragEnd: PropTypes.func.isRequired
+    onDragEnd: PropTypes.func.isRequired,
+    onMouseIn: PropTypes.func.isRequired,
+    onMouseOut: PropTypes.func.isRequired
 }
 
 export default Tile

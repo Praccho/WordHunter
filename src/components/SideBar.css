@@ -8,61 +8,85 @@
 .sidebar {
     box-sizing: border-box;
     flex-grow: 1;
-    background-color: white;
+    background-color: rgb(220, 197, 163);
     height: 100%;
     padding: 5px;
     border-radius: 10px;
-    border: 3px solid lightgrey;
+    border: 3px solid rgb(206, 174, 126);
+    display: flex;
+    flex-direction: column;
+    color: rgb(111, 83, 42);
 }
 
 h1 {
     text-align: center;
-    background-color: lightgrey;
+    background-color: rgb(255,229,180);
     margin: 0;
     border-radius: 10px;
     padding: 10px;
-    border: 3px solid darkgrey;
+    border: 3px solid rgb(210,180,140);
+    flex: 0 0 auto; 
 }
 
-.found-container {
-    width: 100%;
-    height: 50px;
-    background-color: lightgrey;
-    border-radius: 8px;
-    border: 1px solid darkgrey;
-    margin-top: 5px;
-}
+
 
 .control-box {
     display:flex;
     flex-wrap: wrap;
     margin-top: 5px;
+    flex: 0 0 auto;
+    gap: 5px;
+}
+
+.score-box {
+    box-sizing: border-box;
+    margin-top: 5px;
+    height: auto;
+    background-color: rgb(255,229,180);
+    flex: 1 1 auto;
+    border: 3px solid rgb(210,180,140);
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.points-box {
+    display: flex;
+    background-color: rgb(249, 236, 214);
+    border: 2px solid rgb(210,180,140);
+    padding: 5px;
+    border-radius: 5px;
+    color: rgb(191, 147, 90);
+}
+
+.score {
+    flex-grow: 1;
+}
+
+.timer {
+    text-align: right;
+    padding: 0px 10px;
+    border-radius: 5px;
+    background-color: white;
 }
 
 .button {
     box-sizing: border-box;
-    flex-grow: 1;
+    flex: 1 1 auto;
     border-radius: 8px;
     padding: 5px;
     font-size: 20px;
     text-align: center;
-}
-
-.button.randomize {
-    background-color: lavender;
-    border: 3px solid rgb(204, 204, 255);
-    color: rgb(179, 179, 255);
-    width: 50%;
-}
-
-.button.play {
-    background-color: rgb(230, 255, 247);
-    border: 3px solid rgb(179, 255, 231);
-    color: rgb(77, 255, 198);
-    width: 50%;
+    background-color: rgb(255,229,180);
+    border: 3px solid rgb(210,180,140);
+    cursor: pointer;
 }
 
 .break {
     flex-basis: 100%;
     height: 0;
 }
+
+h3 {
+    margin: 0;
+}
+

@@ -24,9 +24,15 @@ function GameBoard({ dict }) {
     const [seenTiles, setSeenTiles] = useState(Array(numRows).fill(null).map(() => Array(numCols).fill(0)));
     const [dragging, setDragging] = useState(false);
     const [foundWords, setFoundWords] = useState([]);
+    const [points, setPoints] = useState(0);
+    const [hoverTile, setHoverTile] = useState(null);
+    const [playing, setPlaying] = useState(false);
 
     const handleMouseDown = (rowIndex, colIndex, event) => {
         event.preventDefault();
+        if (!playing) {
+            setHoverTile(null);
+        }
         if (tileLetters[rowIndex][colIndex] != '') {
             const seenTilesCopy = [...seenTiles];
             seenTilesCopy[rowIndex][colIndex] = 1;
@@ -65,6 +71,16 @@ function GameBoard({ dict }) {
         }
     }
 
+    const handleMouseEnter = (rowIndex, colIndex) => {
+        if (!dragging && (!selectedTile || (selectedTile.rowIndex !== rowIndex || selectedTile.colIndex !== colIndex))) {
+            setHoverTile({rowIndex, colIndex});
+        }
+    }
+
+    const handleMouseLeave = (rowIndex, colIndex) => {
+        setHoverTile(null);
+    }
+
     function toStr() {
         let ret = ""
         for (let i = 0; i < dragTiles.length; i++) {
@@ -75,12 +91,10 @@ function GameBoard({ dict }) {
 
     const handleMouseUp = (rowIndex, colIndex, event) => {
         event.preventDefault();
-        // drag ends on same key (aka select)
         if (dragging) {
             if (dragTiles.length >= 3) {
                 const userStr = toStr();
                 if (dict.has(userStr)) {
-                    // log scores
                     const foundWordsCopy = [...foundWords];
                     foundWordsCopy.push(userStr);
                     setFoundWords(foundWordsCopy);
@@ -92,7 +106,7 @@ function GameBoard({ dict }) {
             setDragging(false);
             setDragTiles([]);
         }
-        if (dragTiles.length <= 1 && (!selectedTile || !(selectedTile && selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex))) {
+        if (!playing && dragTiles.length <= 1 && (!selectedTile || !(selectedTile && selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex))) {
             setSelectedTile({rowIndex, colIndex});
             setInputValue(''); 
         } else {
@@ -165,7 +179,7 @@ function GameBoard({ dict }) {
         const choice = Math.random();
         let i = 0;
         let tot = 0;
-        
+
         while (choice > tot) {
             tot += dist[i]
             i += 1
@@ -175,24 +189,59 @@ function GameBoard({ dict }) {
     }
     
     const handleRandomize = () => {
-        let copyTileLetters = [...tileLetters];
-        for (let i = 0; i < numRows; i++) {
-            for (let j = 0; j < numCols; j++) {
-                if (copyTileLetters[i][j] != "") {
-                    copyTileLetters[i][j] = chooseLetter();
+        if (!playing) {
+            let copyTileLetters = [...tileLetters];
+            for (let i = 0; i < numRows; i++) {
+                for (let j = 0; j < numCols; j++) {
+                    if (copyTileLetters[i][j] != "") {
+                        copyTileLetters[i][j] = chooseLetter();
+                    }
                 }
             }
+            setTileLetters(copyTileLetters);
+            setDragging(false);
+            setDragTiles([]);
+            setSelectedTile(null);
         }
-        setTileLetters(copyTileLetters);
-        setDragging(false);
-        setDragTiles([]);
-        setSelectedTile(null);
     }
 
+    const timeLimit = 90;
+    const [timeLeft, setTimeLeft] = useState(timeLimit);
+
+    useEffect(() => {
+        let timerInterval;
+
+        if (playing) {
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    setTimeLeft(0);
+                    clearInterval(timerInterval);
+                    setPlaying(false);
+                } else {
+                    setTimeLeft(prevTimeLeft => prevTimeLeft - 1);
+                }
+            }, 1000);
+        } else {
+            clearInterval(timerInterval);
+        }
+
+        return () => {
+            clearInterval(timerInterval);
+        };
+    }, [playing, timeLeft]);
+
+    function handlePlay() {
+        if (!playing) {
+            setTimeLeft(timeLimit);
+            setSelectedTile(null);
+            setPlaying(true);
+        } 
+    }
     
     const navBarContainerStyle = {
         width: boardLen
     }
+
     return (
         <div className="full-window">
             <div className="game-board">
@@ -208,16 +257,25 @@ function GameBoard({ dict }) {
                                 selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex ? 'selected' : ''}
                                 ${dragging && seenTiles[rowIndex][colIndex] ? 'dragged' : ''}
                                 ${dragging && dragTiles.length >= 3 && foundWords.includes(toStr()) ? 'is-found' : ''}
-                                ${dragging && dragTiles.length >= 3 && dict.has(toStr()) && !foundWords.includes(toStr()) ? 'is-word' : ''}`}                       
+                                ${dragging && dragTiles.length >= 3 && dict.has(toStr()) && !foundWords.includes(toStr()) ? 'is-word' : ''}
+                                ${hoverTile && hoverTile.rowIndex === rowIndex && hoverTile.colIndex === colIndex ? 'hovering' : ''}`}                       
                             onDragStart={(e) => handleMouseDown(rowIndex, colIndex, e)}
                             onDragging={(e) => handleMouseDrag(rowIndex, colIndex, e)}
                             onDragEnd={(e) => handleMouseUp(rowIndex, colIndex, e)}
+                            onMouseIn={() => handleMouseEnter(rowIndex, colIndex)}
+                            onMouseOut={() => handleMouseLeave(rowIndex, colIndex)}
                             />
                         ))}
                     </div>
                 ))}
             </div>
-            <SideBar wordList={foundWords} onRandomize={() => handleRandomize()}/>
+            <SideBar
+                wordList={foundWords}
+                onPlay = {() => handlePlay()}
+                onRandomize={() => handleRandomize()}
+                score={points}
+                timer={timeLeft}
+            />
         </div>);
 }
 
