@@ -1,18 +1,24 @@
-import React from 'react'
-import './SideBar.css'
+import React from 'react';
+import './SideBar.css';
+import Tile from './Tile';
+import './GameBoard.css';
 
 function SideBar({ wordList, onRandomize, score, timer, playing, onPlay }) {
 
-    let minutes = Math.floor(timer / 60);
-    let seconds = Math.min(59, Math.ceil(timer % 60));
-    if (seconds < 10) {
-        seconds = "0" + seconds.toString();
+    const pointsDict = {
+        3: 100,
+        4: 400,
+        5: 800,
+        6: 1400,
+        7: 1800,
+        8: 2200,
+        9: 2600
     }
 
-    function tilify(word) {
-        for (let i = 0; i < word.length; i++) {
-
-        }
+    let minutes = Math.floor(Math.ceil(timer) / 60);
+    let seconds = Math.ceil(timer % 60) % 60;
+    if (seconds < 10) {
+        seconds = "0" + seconds.toString();
     }
 
     let playText = "Play";
@@ -35,7 +41,7 @@ function SideBar({ wordList, onRandomize, score, timer, playing, onPlay }) {
                         <h3 className={`timer ${timer < 10 && timer % 1 == 0 ? "redflash" : ""}`}>{minutes} : {seconds}</h3>
                     </div>
                     <div className="found-words">
-
+                        {wordList.map((s) => (<div className="found-word" key={s}><h4 className="found-string">{s}</h4><h4 className="found-points">{pointsDict[s.length]}</h4></div>))}
                     </div>
                 </div>
             </div>

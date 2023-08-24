@@ -39,9 +39,11 @@ h1 {
 }
 
 .score-box {
+    display: flex;
+    flex-direction: column;
     box-sizing: border-box;
     margin-top: 5px;
-    height: auto;
+    height: 10px;
     background-color: rgb(255,229,180);
     flex: 1 1 auto;
     border: 3px solid rgb(210,180,140);
@@ -56,6 +58,7 @@ h1 {
     padding: 5px;
     border-radius: 5px;
     color: rgb(191, 147, 90);
+    flex: 0;
 }
 
 .score {
@@ -118,3 +121,36 @@ h3 {
     margin: 0;
 }
 
+.found-words {
+    flex: 1;
+    margin-bottom: 1px;
+    overflow: scroll;
+    /* max-height: 95vp; */
+}
+
+.found-word {
+    display: flex;
+    flex: 1;
+    margin-top: 1px;
+    background-color: rgb(254, 249, 240);
+    border: 2px solid rgb(226, 205, 177);
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 10000;
+    transition: border 1s, background-color 1s;
+}
+
+h4 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.found-string {
+    flex-grow: 1;
+}
+
+.found-points {
+    flex-grow: 0;
+    text-align: right;
+    color: rgb(191, 147, 90);
+}

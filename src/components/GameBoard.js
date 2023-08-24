@@ -50,6 +50,16 @@ function GameBoard({ dict }) {
                         [0.08, 0.019, 0.045, 0.032, 0.067, 0.016, 0.029, 0.047, 0.029, 0.0, 0.015, 0.179, 0.045, 0.043, 0.039, 0.046, 0.0, 0.086, 0.073, 0.075, 0.006, 0.003, 0.008, 0.008, 0.0, 0.009],
                         [0.124, 0.002, 0.003, 0.003, 0.253, 0.0, 0.001, 0.002, 0.288, 0.0, 0.001, 0.02, 0.003, 0.017, 0.099, 0.001, 0.0, 0.006, 0.001, 0.024, 0.027, 0.001, 0.003, 0.0, 0.024, 0.095]];
     
+    const pointsDict = {
+        3: 100,
+        4: 400,
+        5: 800,
+        6: 1400,
+        7: 1800,
+        8: 2200,
+        9: 2600
+    }
+    
     const [tileLetters, setTileLetters] = useState(Array(numRows).fill(null).map(() => Array(numCols).fill('')));
     const [selectedTile, setSelectedTile] = useState(null);
     const [inputValue, setInputValue] = useState('');
@@ -136,6 +146,7 @@ function GameBoard({ dict }) {
                 if (dict.has(userStr) && !foundWords.includes(userStr)) {
                     const foundWordsCopy = [...foundWords];
                     foundWordsCopy.push(userStr);
+                    foundWordsCopy.sort((a,b) => {return b.length - a.length;})
                     setFoundWords(foundWordsCopy);
                     console.log(userStr + " is a word!");
                     
@@ -143,6 +154,8 @@ function GameBoard({ dict }) {
                     for (let i = 0; i < dragTiles.length; i++) {
                         copyFlashTiles[dragTiles[i].rowIndex][dragTiles[i].colIndex] = 1;
                     }
+                    console.log(pointsDict[userStr.length]);
+                    setPoints(prevPoints => prevPoints + pointsDict[userStr.length]);
                     playFind();
                     setFlashTiles(copyFlashTiles);
                     setTimeout(cleanUp, 125);
@@ -238,6 +251,7 @@ function GameBoard({ dict }) {
         if (!playing) {
             let copyTileLetters = [...tileLetters];
             let placedLetterFreq = Array(26).fill(0);
+            setFoundWords([]);
             for (let i = 0; i < numRows; i++) {
                 for (let j = 0; j < numCols; j++) {
                     if (copyTileLetters[i][j] != "") {
@@ -292,8 +306,9 @@ function GameBoard({ dict }) {
                     setTimeLeft(0);
                     clearInterval(timerInterval);
                     setPlaying(false);
+                    setTimeout(() => setTimeLeft(timeLimit), 1000);
                 } else {
-                    setTimeLeft(prevTimeLeft => prevTimeLeft - 0.5);
+                    setTimeLeft(prevTimeLeft => prevTimeLeft - 0.5);    
                 }
             }, 500);
         } else {
@@ -307,6 +322,7 @@ function GameBoard({ dict }) {
 
     function handlePlay() {
         if (!playing) {
+            setPoints(0);
             setFoundWords([]);
             setTimeLeft(timeLimit);
             setSelectedTile(null);

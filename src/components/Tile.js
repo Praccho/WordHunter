@@ -50,11 +50,11 @@ Tile.propTypes = {
     letter: PropTypes.string.isRequired,
     length: PropTypes.number.isRequired,
     className: PropTypes.string.isRequired,
-    onDragStart: PropTypes.func.isRequired,
-    onDragging: PropTypes.func.isRequired,
-    onDragEnd: PropTypes.func.isRequired,
-    onMouseIn: PropTypes.func.isRequired,
-    onMouseOut: PropTypes.func.isRequired
+    onDragStart: PropTypes.func,
+    onDragging: PropTypes.func,
+    onDragEnd: PropTypes.func,
+    onMouseIn: PropTypes.func,
+    onMouseOut: PropTypes.func
 }
 
 export default Tile
