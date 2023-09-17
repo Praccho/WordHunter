@@ -89,9 +89,14 @@ function GameBoard({ dict }) {
             if (selectedTile && (selectedTile.rowIndex != rowIndex || selectedTile.colIndex != colIndex)) {
                 setSelectedTile(false);             
             }
-            setDragging(true);
+
+           
             setSeenTiles(seenTilesCopy);
-            setDragTiles(dragTilesCopy);
+            
+            if (playing) {
+                setDragging(true);
+                setDragTiles(dragTilesCopy);
+            }
         }
     }
 
@@ -166,7 +171,8 @@ function GameBoard({ dict }) {
             setDragging(false);
             setDragTiles([]);
         }
-        if (!playing && dragTiles.length <= 1 && (!selectedTile || !(selectedTile && selectedTile.rowIndex === rowIndex && selectedTile.colIndex === colIndex))) {
+        if (!playing) {
+            setHoverTile(null);
             setSelectedTile({rowIndex, colIndex});
             setInputValue(''); 
         } else {
@@ -252,6 +258,7 @@ function GameBoard({ dict }) {
             let copyTileLetters = [...tileLetters];
             let placedLetterFreq = Array(26).fill(0);
             setFoundWords([]);
+            setPoints(0);
             for (let i = 0; i < numRows; i++) {
                 for (let j = 0; j < numCols; j++) {
                     if (copyTileLetters[i][j] != "") {
